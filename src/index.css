@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Kassir ilovasi har doim yorqin tema — quyosh ostida o'qilishi uchun */
+  --color-bg: #f4f5f7;
+  --color-surface: #ffffff;
+  --color-border: #e2e4e9;
+  --color-ink: #12141a;
+  --color-ink-secondary: #565c6b;
+  --color-ink-tertiary: #8b90a0;
+
+  --color-primary: #2563eb;
+  --color-primary-ink: #ffffff;
+  --color-primary-soft: #eaf1ff;
+
+  --color-amber: #b45309;
+  --color-amber-strong: #92400e;
+  --color-amber-soft: #fef3e2;
+
+  --color-success: #15803d;
+  --color-success-soft: #ecfdf3;
+  --color-danger: #dc2626;
+  --color-danger-soft: #fef2f2;
+  --color-warning-soft: #fffbeb;
+
+  --shadow-card: 0 1px 2px rgba(20, 22, 26, 0.04), 0 8px 24px -12px rgba(20, 22, 26, 0.12);
+  --shadow-float: 0 12px 32px -8px rgba(20, 22, 26, 0.22);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body, #root {
+  height: 100%;
+  color-scheme: light only;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
