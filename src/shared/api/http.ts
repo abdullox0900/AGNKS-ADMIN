@@ -13,7 +13,9 @@ function newIdempotencyKey(): string {
 
 http.interceptors.request.use((config) => {
   const { authToken } = useAppStore.getState()
-  if (authToken) {
+  // A request that already carries its own token (e.g. /me right after login, before the
+  // store is updated) must keep it — otherwise a stale stored token would replace it.
+  if (authToken && !config.headers.has('Authorization')) {
     config.headers.set('Authorization', `Bearer ${authToken}`)
   }
   const method = (config.method ?? 'get').toLowerCase()
