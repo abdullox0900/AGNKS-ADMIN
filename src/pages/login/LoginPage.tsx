@@ -6,6 +6,8 @@ import { CodeBoxes } from '@/shared/ui/CodeBoxes'
 import { NumericKeypad } from '@/shared/ui/NumericKeypad'
 import { apiPinLogin } from '@/shared/api/client'
 import { ApiError } from '@/shared/api/errors'
+import { PhoneInput } from '@/shared/ui/PhoneInput'
+import { isCompletePhone, toE164 } from '@/shared/lib/phone'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -16,7 +18,7 @@ export function LoginPage() {
   const [submitting, setSubmitting] = useState(false)
 
   function handlePhoneContinue() {
-    if (phone.replace(/\D/g, '').length < 9) {
+    if (!isCompletePhone(phone)) {
       setError("To'g'ri raqam kiriting")
       return
     }
@@ -39,16 +41,10 @@ export function LoginPage() {
     })
   }
 
-  function normalizePhone(raw: string): string {
-    const digits = raw.replace(/\D/g, '')
-    const withCountry = digits.startsWith('998') ? digits : `998${digits}`
-    return `+${withCountry}`
-  }
-
   async function submitPin(value: string) {
     setSubmitting(true)
     try {
-      await apiPinLogin(normalizePhone(phone), value)
+      await apiPinLogin(toE164(phone), value)
       navigate('/', { replace: true })
     } catch (err) {
       if (err instanceof ApiError && err.code === 'AUTH_LOCKED') {
@@ -77,13 +73,15 @@ export function LoginPage() {
           <>
             <h1 className="mb-2 text-[24px] font-bold text-[var(--color-ink)]">Kirish</h1>
             <p className="mb-6 text-[15px] text-[var(--color-ink-secondary)]">Telefon raqamingizni kiriting</p>
-            <input
+            <PhoneInput
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+998 90 123 45 67"
-              inputMode="tel"
+              onChange={(v) => {
+                setPhone(v)
+                setError(null)
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && handlePhoneContinue()}
               autoFocus
-              className="h-14 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 text-[16px] text-[var(--color-ink)] outline-none focus:border-[var(--color-primary)]"
+              className="h-14 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 text-[17px]"
             />
             {error && <p className="mt-2 text-[13px] font-medium text-[var(--color-danger)]">{error}</p>}
             <button
