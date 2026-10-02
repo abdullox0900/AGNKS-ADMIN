@@ -3,6 +3,7 @@ import type { Shift } from '@/entities/shift'
 import type { FoundClient } from '@/entities/client'
 import type { SpendOperation, SpendOperationStatus } from '@/entities/spendOperation'
 import { http } from './http'
+import { mutate } from 'swr'
 import { useAppStore } from '@/shared/config/appStore'
 
 interface ShiftDto {
@@ -58,10 +59,13 @@ export async function apiPinLogin(phone: string, pin: string): Promise<void> {
     pin,
   })
   useAppStore.getState().setTokens(data.data)
+  void mutate(() => true, undefined, { revalidate: false })
 }
 
+/** Local sign-out (access tokens are stateless). Cached API data is dropped too. */
 export function apiLogout(): void {
   useAppStore.getState().clearAuth()
+  void mutate(() => true, undefined, { revalidate: false })
 }
 
 export async function apiGetCurrentShift(): Promise<Shift | null> {

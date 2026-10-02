@@ -1,17 +1,19 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { ShieldCheck } from 'lucide-react'
 import { Screen } from '@/shared/ui/Screen'
 import { apiPinLogin } from '@/shared/api/client'
 import { ApiError } from '@/shared/api/errors'
 import { PhoneInput } from '@/shared/ui/PhoneInput'
 import { isCompletePhone, toE164 } from '@/shared/lib/phone'
+import { useAppStore } from '@/shared/config/appStore'
 
 const fieldClass = 'h-14 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 text-[17px]'
 
 /** One screen: phone + password, nothing else. */
 export function LoginPage() {
   const navigate = useNavigate()
+  const signedIn = useAppStore((s) => !!s.authToken)
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -39,6 +41,8 @@ export function LoginPage() {
       setSubmitting(false)
     }
   }
+
+  if (signedIn) return <Navigate to="/" replace />
 
   return (
     <Screen className="flex min-h-screen flex-col justify-center">
