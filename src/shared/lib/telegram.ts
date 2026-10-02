@@ -13,6 +13,8 @@ interface TelegramWebApp {
   enableClosingConfirmation: () => void
   disableClosingConfirmation: () => void
   disableVerticalSwipes?: () => void
+  onEvent: (event: string, cb: () => void) => void
+  offEvent: (event: string, cb: () => void) => void
   isVersionAtLeast: (version: string) => boolean
 }
 
@@ -73,6 +75,24 @@ export function tgCloseScanQrPopup() {
     getTelegram()?.closeScanQrPopup()
   } catch {
     /* noop */
+  }
+}
+
+/** Fires when the user dismisses Telegram's scan popup without scanning anything. Returns an unsubscribe. */
+export function tgOnScanClosed(cb: () => void): () => void {
+  const tg = getTelegram()
+  if (!tg?.onEvent) return () => {}
+  try {
+    tg.onEvent('scanQrPopupClosed', cb)
+  } catch {
+    return () => {}
+  }
+  return () => {
+    try {
+      tg.offEvent('scanQrPopupClosed', cb)
+    } catch {
+      /* noop */
+    }
   }
 }
 

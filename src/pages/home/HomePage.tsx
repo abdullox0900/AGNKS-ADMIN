@@ -1,46 +1,16 @@
 import { useNavigate } from 'react-router-dom'
-import { Wallet } from 'lucide-react'
+import { Keyboard, ListChecks, ScanLine } from 'lucide-react'
 import { Screen } from '@/shared/ui/Screen'
 import { ShiftHeader } from '@/widgets/ShiftHeader'
 import { ShiftStats } from '@/widgets/ShiftStats'
 import { OfflineBanner } from '@/widgets/OfflineBanner'
 import { useOnline } from '@/shared/lib/useOnline'
-import { tgShowScanQrPopup, tgCloseScanQrPopup, tgHaptic } from '@/shared/lib/telegram'
-import { apiLookupSpendToken } from '@/shared/api/client'
-import { ApiError } from '@/shared/api/errors'
-
-function extractCode(qrText: string): string | null {
-  const match = qrText.match(/(\d{6})/)
-  return match ? match[1] : null
-}
+import { useStartScan } from '@/features/scan/useStartScan'
 
 export function HomePage() {
   const navigate = useNavigate()
   const online = useOnline()
-
-  function handleSpend() {
-    const opened = tgShowScanQrPopup((text) => {
-      tgCloseScanQrPopup()
-      const code = extractCode(text)
-      if (!code) {
-        navigate('/spend/find')
-        return true
-      }
-      void (async () => {
-        try {
-          const client = await apiLookupSpendToken(code)
-          tgHaptic('success')
-          navigate('/spend/amount', { state: { client } })
-        } catch (err) {
-          tgHaptic('error')
-          const code2 = err instanceof ApiError ? err.code : 'INTERNAL_ERROR'
-          navigate('/spend/find', { state: { errorCode: code2 } })
-        }
-      })()
-      return true
-    })
-    if (!opened) navigate('/spend/find')
-  }
+  const startScan = useStartScan()
 
   return (
     <Screen padded={false}>
@@ -50,28 +20,30 @@ export function HomePage() {
 
       <div className="px-4 pt-6">
         <button
-          onClick={handleSpend}
+          onClick={startScan}
           disabled={!online}
           className="flex h-52 w-full flex-col items-center justify-center gap-3 rounded-3xl bg-[var(--color-primary)] text-white active:opacity-90 disabled:opacity-40"
           style={{ boxShadow: 'var(--shadow-float)' }}
         >
-          <Wallet size={40} />
-          <span className="text-[22px] font-bold">Bonus bilan to'lash</span>
+          <ScanLine size={44} />
+          <span className="text-[22px] font-bold">Skanerlash</span>
+          <span className="text-[13px] font-medium text-white/80">Mijozning bonus QR kodini skanerlang</span>
         </button>
       </div>
 
-      <div className="mt-6 space-y-2 px-4">
+      <div className="mt-4 space-y-2 px-4">
         <button
-          onClick={() => navigate('/shift/operations')}
-          className="flex h-14 w-full items-center justify-center rounded-2xl bg-[var(--color-surface)] text-[15px] font-medium text-[var(--color-ink)] active:bg-[var(--color-border)]"
+          onClick={() => navigate('/spend/find')}
+          disabled={!online}
+          className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl border border-[var(--color-primary)] text-[15px] font-semibold text-[var(--color-primary)] active:bg-[var(--color-primary-soft)] disabled:opacity-40"
         >
-          Bugungi yechimlar
+          <Keyboard size={20} /> Kodni qo'lda kiritish
         </button>
         <button
-          onClick={() => navigate('/shifts')}
-          className="flex h-14 w-full items-center justify-center rounded-2xl bg-[var(--color-surface)] text-[15px] font-medium text-[var(--color-ink)] active:bg-[var(--color-border)]"
+          onClick={() => navigate('/shift/operations')}
+          className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[var(--color-surface)] text-[15px] font-medium text-[var(--color-ink)] active:bg-[var(--color-border)]"
         >
-          Ish tarixi
+          <ListChecks size={20} /> Bugungi yechimlar
         </button>
       </div>
     </Screen>

@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import { apiGetMe, apiGetCurrentShift, apiGetShiftOperations, apiGetPastShifts } from './client'
+import { apiGetMe, apiGetCurrentShift, apiGetShiftOperations } from './client'
 
 export function useCashier() {
   return useSWR('/cashier/me', apiGetMe, { revalidateIfStale: false })
@@ -12,8 +12,4 @@ export function useCurrentShift() {
 export function useShiftOperations() {
   const { data: shift } = useCurrentShift()
   return useSWR(shift ? ['/cashier/spend', shift.id] : null, () => apiGetShiftOperations(shift!.id))
-}
-
-export function usePastShifts() {
-  return useSWR('/cashier/shifts/past', apiGetPastShifts)
 }

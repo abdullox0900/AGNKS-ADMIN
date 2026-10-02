@@ -69,11 +69,6 @@ export async function apiGetCurrentShift(): Promise<Shift | null> {
   return data.data ? toShift(data.data) : null
 }
 
-export async function apiGetPastShifts(): Promise<Shift[]> {
-  const { data } = await http.get<{ data: { items: ShiftDto[]; nextCursor: string | null } }>('/cashier/shifts')
-  return data.data.items.map(toShift)
-}
-
 interface SpendLookupResponse {
   sessionId: string
   client: { name: string }
