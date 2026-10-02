@@ -2,7 +2,7 @@ interface TelegramWebApp {
   ready: () => void
   expand: () => void
   initData: string
-  initDataUnsafe: { user?: { id: number; first_name?: string; last_name?: string; username?: string } }
+  initDataUnsafe: { user?: { id: number; first_name?: string; last_name?: string; username?: string; allows_write_to_pm?: boolean } }
   BackButton: { show: () => void; hide: () => void; onClick: (cb: () => void) => void; offClick: (cb: () => void) => void }
   HapticFeedback: {
     notificationOccurred: (type: 'error' | 'success' | 'warning') => void
@@ -15,6 +15,7 @@ interface TelegramWebApp {
   disableVerticalSwipes?: () => void
   onEvent: (event: string, cb: () => void) => void
   offEvent: (event: string, cb: () => void) => void
+  requestWriteAccess?: (cb?: (allowed: boolean) => void) => void
   isVersionAtLeast: (version: string) => boolean
 }
 

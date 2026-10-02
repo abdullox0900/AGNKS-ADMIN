@@ -63,6 +63,15 @@ export async function apiPinLogin(phone: string, pin: string): Promise<void> {
 }
 
 /** Local sign-out (access tokens are stateless). Cached API data is dropped too. */
+/** Remember this cashier's Telegram chat (for the evening summary). Never throws — it's best effort. */
+export async function apiLinkTelegram(initData: string): Promise<void> {
+  try {
+    await http.post('/cashier/auth/telegram-link', { initData })
+  } catch {
+    /* the cashier is signed in either way */
+  }
+}
+
 export function apiLogout(): void {
   useAppStore.getState().clearAuth()
   void mutate(() => true, undefined, { revalidate: false })

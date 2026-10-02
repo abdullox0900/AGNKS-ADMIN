@@ -1,6 +1,7 @@
 import { createBrowserRouter, Outlet } from 'react-router-dom'
 import { AuthGuard } from './AuthGuard'
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary'
+import { useLinkTelegram } from '@/shared/lib/useLinkTelegram'
 
 import { LoginPage } from '@/pages/login/LoginPage'
 import { HomePage } from '@/pages/home/HomePage'
@@ -12,6 +13,7 @@ import { SpendDonePage } from '@/pages/spend-done/SpendDonePage'
 import { ShiftOperationsPage } from '@/pages/shift-operations/ShiftOperationsPage'
 
 function AuthedLayout() {
+  useLinkTelegram()
   return (
     <AuthGuard>
       <ErrorBoundary>
